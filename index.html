@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Get hands on with JavaScript’s Fetch API</h1>
+    <p>
+      Write your requests in the script and watch the console and network logs.
+    </p>
+
+    <p>My ip address is:</p>
+    <p></p>
+    <p id="ip"></p>
+
+    <p>My City is:</p>
+    <p></p>
+    <p id="city"></p>
+
+    <p>My Country is:</p>
+    <p></p>
+    <p id="country"></p>
+
+    <p>My isp is:</p>
+    <p></p>
+    <p id="isp"></p>
+
+    <p>My weather at my location is:</p>
+    <p></p>
+    <p id="weather">   </p> degrees °C
+
+    <p>My weather at my location is:</p>
+    <p></p>
+    <p id="weathertemp">  </p>  degrees °F
+    
+
+
+
+      <script>
+        async function loadLocation() {
+
+          //first api call
+          const myIpAddress = await fetch("https://api.ipify.org?format=json");
+          const ipAddress = await myIpAddress.json();
+          console.log("my IP Address is: ", ipAddress.ip);
+
+          document.getElementById("ip").innerHTML = ipAddress.ip;
+
+          //second api call
+          const response = await fetch(
+            "http://ip-api.com/json/" + ipAddress.ip
+          );
+          const location = await response.json();
+          console.log("my city is: ", location.city);
+          console.log("my country is: ", location.country);
+          console.log("my isp is: ", location.isp);
+          console.log(location);
+
+          document.getElementById("city").innerHTML = location.city;
+          document.getElementById("country").innerHTML = location.country;
+          document.getElementById("isp").innerHTML = location.isp;
+
+          //third api call - get lat and longitude of ip address gotten from ip address
+          const responselatlonip = await fetch(
+            "https://open-weather13.p.rapidapi.com/city/latlon/"+ location.lat + "/" + location.lon,
+            {
+              method: "GET",
+              headers: {
+                "x-rapidapi-host": "open-weather13.p.rapidapi.com",
+                "x-rapidapi-key":
+                  "c1ff1beef4msh0e3ec225dfd79c5p1a152fjsnfad56e49f1e6",
+              },
+            }
+          );
+
+          const ipweather = await responselatlonip.json();
+          console.log("my weather is: ", ipweather.main.temp);
+          document.getElementById("weathertemp").innerHTML = ipweather.main.temp;
+
+
+          //fourth api call
+          const responseForWeather = await fetch(
+            "https://open-weather13.p.rapidapi.com/city/" + location.city,
+            {
+              method: "GET",
+              headers: {
+                "x-rapidapi-host": "open-weather13.p.rapidapi.com",
+                "x-rapidapi-key":
+                  "c1ff1beef4msh0e3ec225dfd79c5p1a152fjsnfad56e49f1e6",
+              },
+            }
+          );
+
+          const weather = await responseForWeather.json();
+          console.log("my weather is: ", weather.main.temp);
+          document.getElementById("weather").innerHTML = weather.main.temp;
+        }
+
+        loadLocation();
+      </script>
+    </p>
+  </body>
+</html>
